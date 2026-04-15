@@ -1,0 +1,164 @@
+# AI Solution Verification Challenge Report
+
+---
+
+## Problem Selected
+Buggy Merge Sort Function (JavaScript)
+
+---
+
+## Initial AI Solution Understanding
+
+The AI suggested that the issue in the merge sort implementation is caused by incorrect index handling in the `merge()` function, specifically:
+- Wrong index being incremented in the left-over loop
+- Potential missing element handling after merge comparison loop
+
+At first glance, the algorithm appears logically correct, but contains subtle pointer and loop mistakes.
+
+---
+
+## Verification Strategy 1: Collaborative Solution Verification
+
+### What I checked:
+- Compared AI explanation with original code line-by-line
+- Verified how `i` and `j` pointers are supposed to move
+
+### Findings:
+- The AI correctly identified a bug in this section:
+
+```javascript id="bug1"
+while (i < left.length) {
+  result.push(left[i]);
+  j++; // incorrect
+}
+````
+
+### Issue Confirmed:
+
+* Should increment `i`, not `j`
+* This causes an infinite loop or incorrect merge result
+
+---
+
+## Verification Strategy 2: Learning Through Alternative Approaches
+
+### Alternative Approach:
+
+I rewrote the merge step logically:
+
+* First: compare both arrays until one is empty
+* Then: append remaining elements
+
+### Correct logic:
+
+```javascript id="correct_logic"
+while (i < left.length) {
+  result.push(left[i]);
+  i++;
+}
+
+while (j < right.length) {
+  result.push(right[j]);
+  j++;
+}
+```
+
+### Insight:
+
+The AI solution was correct, but alternative reasoning confirmed that:
+
+* Merge logic depends on pointer consistency
+* Each pointer must only control its own array
+
+---
+
+## Verification Strategy 3: Developing a Critical Eye
+
+### Things I questioned:
+
+* Could there be more than one bug?
+* Is sorting still guaranteed correct?
+* Does the comparison logic handle duplicates properly?
+
+### Findings:
+
+* Main bug was pointer mismanagement
+* Secondary issue: merge logic works only if pointer updates are correct
+* No issue with recursion or splitting logic
+
+### Confidence Check:
+
+After reviewing edge cases (empty arrays, uneven splits), the fix holds correctly.
+
+---
+
+## Final Verified Solution
+
+```javascript id="fixed_merge_sort"
+function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+
+  const mid = Math.floor(arr.length / 2);
+  const left = mergeSort(arr.slice(0, mid));
+  const right = mergeSort(arr.slice(mid));
+
+  return merge(left, right);
+}
+
+function merge(left, right) {
+  let result = [];
+  let i = 0;
+  let j = 0;
+
+  while (i < left.length && j < right.length) {
+    if (left[i] < right[j]) {
+      result.push(left[i]);
+      i++;
+    } else {
+      result.push(right[j]);
+      j++;
+    }
+  }
+
+  while (i < left.length) {
+    result.push(left[i]);
+    i++;
+  }
+
+  while (j < right.length) {
+    result.push(right[j]);
+    j++;
+  }
+
+  return result;
+}
+```
+
+---
+
+## Key Learnings
+
+* Small pointer errors can break entire algorithms
+* AI solutions are helpful but must be verified step-by-step
+* Writing out logic manually helps catch hidden bugs
+* Merge sort correctness depends entirely on correct pointer movement
+* Testing edge cases is critical (empty arrays, uneven splits)
+
+---
+
+## Reflection
+
+### 1. Confidence After Verification
+
+My confidence increased after manually tracing execution. The AI was mostly correct, but verification helped confirm and clarify the exact bug.
+
+### 2. Most Critical Area of Scrutiny
+
+The pointer update logic (`i++` vs `j++`) required the most attention, as it is easy to overlook but critical for correctness.
+
+### 3. Most Valuable Verification Technique
+
+“Learning Through Alternative Approaches” was the most useful because rewriting the logic made the error obvious.
+
+---
+
