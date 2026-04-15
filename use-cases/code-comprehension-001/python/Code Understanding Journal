@@ -1,0 +1,69 @@
+Part 1: Task Creation & Status Updates
+
+
+From the file names, I assumed:
+
+`cli.py` handles user input
+`task_manager.py` contains logic
+`models.py` defines tasks
+`storage.py` saves data
+
+Task Creation Flow
+
+1. User runs `create` command in CLI
+2. `cli.py` calls `create_task()`
+3. TaskManager converts inputs (priority, date)
+4. A `Task` object is created
+5. Task is saved via storage
+6. Stored in `tasks.json`
+
+Task Status Update
+
+1. User runs `status` command
+2. `update_task_status()` is called
+3. If DONE → `mark_as_done()` updates status + timestamp
+4. Otherwise → storage updates the task
+5. Changes are saved
+
+Data Storage
+
+* Stored in `tasks.json`
+* Uses JSON encoder/decoder
+* Converts Enums and dates to storable formats
+
+Part 2: Task Prioritization
+
+
+I thought priority was just a number (1–4).
+
+
+* Priority is an **Enum** (LOW → URGENT)
+* Numbers are converted into Enum values
+* Stored as numbers in JSON
+
+Insight
+
+Enums make the system clearer and more structured.
+Part 3: Data Flow (Mark Complete)
+
+Flow
+
+User → CLI → TaskManager → Task → Storage → JSON
+
+State Changes
+
+* status: TODO → DONE
+* completed_at: None → timestamp
+
+Possible Issues
+
+* Task not found
+* Invalid input
+* Save failure
+
+
+How IA helped me
+
+Helped break down flows and confirm my understanding
+
+

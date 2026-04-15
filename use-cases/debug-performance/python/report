@@ -1,0 +1,148 @@
+# Performance Optimization Challenge Report
+
+---
+
+## Selected Scenario
+Slow Code Analysis (Python - Product Combination Finder)
+
+---
+
+## Problem Summary
+
+The original function is used in an e-commerce system to find product pairs whose combined price is close to a target value. It processes around 5,000+ products and is currently slow (20–30 seconds per execution), causing delays on the product recommendation page.
+
+---
+
+## Root Cause Analysis
+
+The performance issue is caused by several inefficient patterns:
+
+### 1. Nested Loop Complexity (O(n²))
+The function uses two nested loops:
+
+```python id="nested_loops"
+for i in range(len(products)):
+    for j in range(len(products)):
+````
+
+This results in approximately **25 million comparisons** for 5,000 products.
+
+---
+
+### 2. Redundant Computation
+
+* Same pairs are checked twice (A,B and B,A)
+* Self-comparisons are skipped only after the check (`i != j`), not structurally prevented
+
+---
+
+### 3. Expensive Duplicate Check
+
+```python id="duplicate_check"
+if not any(r['product1']['id'] == product2['id'] and
+           r['product2']['id'] == product1['id'] for r in results):
+```
+
+This makes the algorithm even slower by adding an **O(n)** scan inside the loop → leading to near **O(n³)** behavior.
+
+---
+
+### 4. Inefficient Pair Generation Strategy
+
+The algorithm recomputes and revalidates pairs instead of generating only valid combinations once.
+
+---
+
+## Optimized Solution
+
+### Key Improvements:
+
+* Avoid duplicate pair generation
+* Remove self-comparisons properly
+* Replace nested duplicate scanning
+* Reduce unnecessary iterations
+
+---
+
+### Optimized Code
+
+```python id="optimized_solution"
+def find_product_combinations(products, target_price, price_margin=10):
+    results = []
+    n = len(products)
+
+    # Only iterate forward to avoid duplicates
+    for i in range(n):
+        for j in range(i + 1, n):
+            product1 = products[i]
+            product2 = products[j]
+
+            combined_price = product1['price'] + product2['price']
+
+            if target_price - price_margin <= combined_price <= target_price + price_margin:
+                results.append({
+                    'product1': product1,
+                    'product2': product2,
+                    'combined_price': combined_price,
+                    'price_difference': abs(target_price - combined_price)
+                })
+
+    # Efficient sorting
+    results.sort(key=lambda x: x['price_difference'])
+    return results
+```
+
+---
+
+## Performance Improvements
+
+### Before Optimization:
+
+* Time complexity: ~O(n³) (due to duplicate checks)
+* Execution time: 20–30 seconds
+* High CPU usage
+
+### After Optimization:
+
+* Time complexity: O(n²)
+* Execution time: significantly reduced (estimated 2–6 seconds depending on hardware)
+* No duplicate scanning overhead
+
+---
+
+## Key Learning Points
+
+* Nested loops on large datasets can quickly become expensive
+* Avoid O(n) operations inside O(n²) loops
+* Prevent duplicates structurally instead of checking after computation
+* Sorting should be done once at the end, not repeatedly during processing
+* Algorithm design matters more than micro-optimizations
+
+---
+
+## Performance Concepts Learned
+
+* Big-O complexity (O(n²) vs O(n³))
+* Cost of nested loops on large datasets
+* Importance of avoiding repeated scans of growing lists
+* Efficient pair generation techniques
+
+---
+
+## Measurement Approach
+
+Performance was measured using:
+
+```python
+import time
+start = time.time()
+# run function
+end = time.time()
+print(end - start)
+```
+
+---
+
+## Summary
+
+The main performance issue was inefficient pair comparison combined with a duplicate-checking loop inside the main iteration. By restructuring the loops to only generate unique pairs, the algorithm was reduced from near cubic complexity to quadratic complexity, significantly improving runtime and scalability.

@@ -1,0 +1,146 @@
+# Part 1: Initial vs Final Understanding
+
+## Initial Understanding
+
+At first, I assumed the project was a simple CLI application where:
+
+* Tasks are created and stored
+* Priority is just a number
+* Most logic exists in one place
+
+I did not clearly understand how the files were connected or how data was persisted.
+
+---
+
+## Final Understanding
+
+After exploring the code, I now understand that the project is structured into distinct layers:
+
+* `cli.py` handles user interaction
+* `task_manager.py` contains application logic
+* `models.py` defines the task structure and behavior
+* `storage.py` manages saving and loading tasks
+
+The system follows a clear flow where data moves through these layers, making it modular and easier to extend.
+
+
+# Part 2: Key Insights from Prompts
+
+## Project Structure Prompt
+
+* Helped identify the CLI as the main entry point
+* Revealed the use of separation of concerns
+* Clarified how components interact with each other
+
+## Feature Location Prompt
+
+* Showed that new features should follow the existing flow:
+  CLI → TaskManager → Storage
+* Helped identify reusable components like storage for file handling
+
+## Domain Understanding Prompt
+
+* Clarified that:
+
+  * `Task` is the main entity
+  * `TaskStatus` and `TaskPriority` are Enums
+* Showed that business logic exists within the model (e.g. marking tasks as done, checking overdue)
+
+
+# Part 3: Feature Planning – Export to CSV
+
+## Where it should be implemented
+
+* Add a new command in `cli.py`
+* Implement logic in `task_manager.py`
+* Use `storage.py` to retrieve task data
+
+## Components affected
+
+* CLI for user interaction
+* TaskManager for processing
+* Possibly a helper function for formatting CSV data
+
+## Approach
+
+1. Retrieve all tasks from storage
+2. Convert task data into CSV format
+3. Write the data to a `.csv` file
+
+
+# Part 4: Domain Model Understanding
+
+## Core Entities
+
+* `Task`: represents a task with attributes like title, status, and priority
+* `TaskStatus`: defines task states (todo, in progress, done)
+* `TaskPriority`: defines urgency levels
+
+## Key Insight
+
+Business logic is partially embedded within the Task model, not only in the manager layer.
+
+
+# Part 5: Practical Scenario – New Business Rule
+
+## Rule
+
+Tasks overdue for more than 7 days should be marked as abandoned unless they are high priority.
+
+
+## Files to Modify
+
+* `models.py` to introduce a new status (e.g. ABANDONED)
+* `task_manager.py` to apply the rule
+* Possibly `storage.py` to ensure persistence
+
+
+## Approach
+
+1. Add a new status for abandoned tasks
+2. Extend the overdue logic to check if a task exceeds 7 days
+3. Apply condition:
+
+   * If overdue for more than 7 days and not high priority, update status
+4. Save changes to storage
+
+
+
+## Questions for the Team
+
+* Should abandoned tasks be reversible?
+* When should this rule be applied (on load, on update, or periodically)?
+* Should users be notified when a task becomes abandoned?
+
+
+
+# Part 6: Reflection
+
+## How AI Helped
+
+* Broke down the structure into manageable parts
+* Helped confirm and refine my understanding
+* Provided guidance on where features belong
+
+
+
+## Remaining Uncertainties
+
+* When certain logic should be triggered automatically
+* How the system would behave at a larger scale
+
+
+## Next Steps
+
+* Explore additional features such as tagging in more depth
+* Practice modifying the code
+* Add tests to better understand behavior
+
+
+# Final Takeaway
+
+This exercise improved my ability to approach an unfamiliar codebase by:
+
+* Starting with structure instead of details
+* Tracing data flow across components
+* Using AI as a guide to validate understanding

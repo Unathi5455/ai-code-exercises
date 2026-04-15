@@ -1,4 +1,4 @@
-import argparse
+# task_manager/task_manager.py
 from datetime import datetime, timedelta
 
 from models import TaskPriority, Task, TaskStatus
@@ -10,7 +10,7 @@ class TaskManager:
         self.storage = TaskStorage(storage_path)
 
     def create_task(self, title, description="", priority_value=2,
-                   due_date_str=None, tags=None):
+                    due_date_str=None, tags=None):
         priority = TaskPriority(priority_value)
         due_date = None
         if due_date_str:
@@ -19,7 +19,6 @@ class TaskManager:
             except ValueError:
                 print("Invalid date format. Use YYYY-MM-DD")
                 return None
-
         task = Task(title, description, priority, due_date, tags)
         task_id = self.storage.add_task(task)
         return task_id
@@ -27,15 +26,12 @@ class TaskManager:
     def list_tasks(self, status_filter=None, priority_filter=None, show_overdue=False):
         if show_overdue:
             return self.storage.get_overdue_tasks()
-
         if status_filter:
             status = TaskStatus(status_filter)
             return self.storage.get_tasks_by_status(status)
-
         if priority_filter:
             priority = TaskPriority(priority_filter)
             return self.storage.get_tasks_by_priority(priority)
-
         return self.storage.get_all_tasks()
 
     def update_task_status(self, task_id, new_status_value):
@@ -115,4 +111,3 @@ class TaskManager:
             "overdue": overdue_count,
             "completed_last_week": completed_recently
         }
-

@@ -31,6 +31,7 @@ def format_task(task):
         f"  Created: {task.created_at.strftime('%Y-%m-%d %H:%M')}"
     )
 
+
 def main():
     parser = argparse.ArgumentParser(description="Task Manager CLI")
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
@@ -50,24 +51,24 @@ def main():
     list_parser.add_argument("-o", "--overdue", help="Show only overdue tasks", action="store_true")
 
     # Update task commands
-    update_status_parser = subparsers.add_parser("status", help="Update task status")
+    update_status_parser = subparsers.add_parser("update-status", help="Update task status")
     update_status_parser.add_argument("task_id", help="Task ID")
     update_status_parser.add_argument("status", help="New status", choices=["todo", "in_progress", "review", "done"])
 
-    update_priority_parser = subparsers.add_parser("priority", help="Update task priority")
+    update_priority_parser = subparsers.add_parser("update-priority", help="Update task priority")
     update_priority_parser.add_argument("task_id", help="Task ID")
     update_priority_parser.add_argument("priority", help="New priority", type=int, choices=[1, 2, 3, 4])
 
-    update_due_parser = subparsers.add_parser("due", help="Update task due date")
+    update_due_parser = subparsers.add_parser("update-due-date", help="Update task due date")
     update_due_parser.add_argument("task_id", help="Task ID")
     update_due_parser.add_argument("due_date", help="New due date (YYYY-MM-DD)")
 
     # Tag management
-    add_tag_parser = subparsers.add_parser("tag", help="Add tag to task")
+    add_tag_parser = subparsers.add_parser("add-tag", help="Add tag to task")
     add_tag_parser.add_argument("task_id", help="Task ID")
     add_tag_parser.add_argument("tag", help="Tag to add")
 
-    remove_tag_parser = subparsers.add_parser("untag", help="Remove tag from task")
+    remove_tag_parser = subparsers.add_parser("remove-tag", help="Remove tag from task")
     remove_tag_parser.add_argument("task_id", help="Task ID")
     remove_tag_parser.add_argument("tag", help="Tag to remove")
 
@@ -104,31 +105,31 @@ def main():
         else:
             print("No tasks found matching the criteria.")
 
-    elif args.command == "status":
+    elif args.command == "update-status":
         if task_manager.update_task_status(args.task_id, args.status):
             print(f"Updated task status to {args.status}")
         else:
             print("Failed to update task status. Task not found.")
 
-    elif args.command == "priority":
+    elif args.command == "update-priority":
         if task_manager.update_task_priority(args.task_id, args.priority):
             print(f"Updated task priority to {args.priority}")
         else:
             print("Failed to update task priority. Task not found.")
 
-    elif args.command == "due":
+    elif args.command == "update-due-date":
         if task_manager.update_task_due_date(args.task_id, args.due_date):
             print(f"Updated task due date to {args.due_date}")
         else:
             print("Failed to update task due date. Task not found or invalid date.")
 
-    elif args.command == "tag":
+    elif args.command == "add-tag":
         if task_manager.add_tag_to_task(args.task_id, args.tag):
             print(f"Added tag '{args.tag}' to task")
         else:
             print("Failed to add tag. Task not found.")
 
-    elif args.command == "untag":
+    elif args.command == "remove-tag":
         if task_manager.remove_tag_from_task(args.task_id, args.tag):
             print(f"Removed tag '{args.tag}' from task")
         else:
