@@ -1,0 +1,70 @@
+# Using AI to Help with Testing – Report
+
+---
+
+## Part 1: Test Planning
+
+### 1.1 Behavior Analysis
+
+#### Understanding of Function (calculateTaskScore)
+The function calculates a score for a task based on factors such as:
+- Priority level
+- Due date urgency
+- Task status
+- Last updated time
+- Other attributes (e.g., tags or assignment)
+
+---
+
+### Test Cases Identified
+
+1. Task with default values returns a valid score  
+2. High priority task has higher score than low priority  
+3. Overdue task increases score  
+4. Task with no due date does not crash  
+5. Recently updated task vs old task (days since update)  
+6. Edge case: empty or null fields  
+7. Edge case: extreme due dates (past/future)
+
+---
+
+### 1.2 Test Plan
+
+#### Test Types
+- Unit Tests: For individual functions  
+- Integration Tests: For full workflow  
+
+---
+
+### Test Checklist (Priority Ordered)
+
+#### High Priority
+- Correct score calculation based on priority  
+- Due date impact on score  
+- Sorting tasks correctly  
+
+#### Medium Priority
+- Handling missing fields  
+- Handling overdue tasks  
+
+#### Low Priority
+- Edge cases (empty data, extreme values)
+
+---
+
+### Expected Outcomes
+
+- Scores should increase with urgency and importance  
+- Sorting should return tasks in correct order  
+- No crashes on missing or invalid data  
+
+---
+
+## Part 2: Improved Unit Tests
+
+### Basic Test (Initial)
+
+```python
+def test_basic_score():
+    task = {"priority": 2}
+    assert calculateTaskScore(task) > 0
